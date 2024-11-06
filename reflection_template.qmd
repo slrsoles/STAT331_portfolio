@@ -1,6 +1,6 @@
 ---
 title: "STAT 331 Portfolio"
-author: "Your Name Goes Here"
+author: "Skylar Richards"
 format: 
   html: 
     self-contained: true
@@ -11,7 +11,7 @@ execute:
   echo: true
 ---
 
-[**My Grade:**]{.underline} I believe my grade equivalent to course work evidenced below to be an __.
+[**My Grade:**]{.underline} I believe my grade equivalent to course work evidenced below to be an A-.
 
 [**Learning Objective Evidence:**]{.underline} In the code chunks below, provide code from Lab or Challenge assignments where you believe you have demonstrated proficiency with the specified learning target. Be sure to specify **where** the code came from (e.g., Lab 4 Question 2).
 
@@ -24,12 +24,23 @@ execute:
 ```{r}
 #| label: wd-1-csv
 
+# from lab 3 
+data <- read_csv(here("data","teacher_evals.csv"))
+
+
 ```
 
 -   `xlsx`
 
 ```{r}
 #| label: wd-1-xlsx
+# from practice activity 4
+military <- read_xlsx(here::here("data", 
+                                 "gov_spending_per_capita.xlsx"), 
+                      sheet = "Share of Govt. spending", 
+                      skip  = 6, 
+                      n_max = 192)
+
 
 ```
 
@@ -37,6 +48,9 @@ execute:
 
 ```{r}
 #| label: wd-1-txt
+# from check in 2.3 
+ages_tab <- read_table(file = here::here("Week 2", "Check-ins", "Ages_Data", "ages_tab.txt"))
+
 
 ```
 
@@ -44,6 +58,8 @@ execute:
 
 ```{r}
 #| label: wd-2
+
+
 
 ```
 
@@ -54,6 +70,20 @@ execute:
 ```{r}
 #| label: wd-3-numeric
 
+# from lab 5
+
+suspect_killer <- drivers_license|>
+  filter(gender == "male",
+         str_detect(plate_number, "H42W"))|>
+  rename(license_id = id) |>
+ inner_join(person, by = "license_id") |>
+  inner_join(get_fit_now_member, by = c("id" = "person_id", "name" = "name"))|>
+  rename(membership_id = id.y)|>
+  inner_join(get_fit_now_check_in, by = "membership_id")|>
+  filter(check_in_date == "20180109", # numeric filtering here
+         str_detect(membership_id, "^48Z"))
+
+
 ```
 
 -   character -- specifically a string (example must use functions from **stringr**)
@@ -61,19 +91,49 @@ execute:
 ```{r}
 #| label: wd-3-string
 
+# from lab 5
+
+suspect_killer <- drivers_license|>
+  filter(gender == "male",
+         str_detect(plate_number, "H42W"))|>
+  rename(license_id = id) |>
+ inner_join(person, by = "license_id") |>
+  inner_join(get_fit_now_member, by = c("id" = "person_id", "name" = "name"))|>
+  rename(membership_id = id.y)|>
+  inner_join(get_fit_now_check_in, by = "membership_id")|>
+  filter(check_in_date == "20180109",
+         str_detect(membership_id, "^48Z")) #string filtering here
 ```
 
 -   factor
 
 ```{r}
 #| label: wd-3-factor
+# from lab 4
+ca_childcare <- ca_childcare |> 
+  mutate(county_name = str_remove(county_name, " County")) |> # removes county and blank space before
+  mutate(region = fct_collapse(county_name,  "Superior California" = c("Butte", "Colusa", "El Dorado",
+                                                         "Glenn", "Lassen", "Modoc",
+                                                         "Nevada", "Placer", "Plumas",
+                                                         "Sacramento", "Shasta", "Sierra",
+                                                         "Siskiyou", "Sutter", "Tehama",
+                                                         "Yolo", "Yuba", ...
 
+                               # fct_collpase involves 20+ lines, shortened for readability 
 ```
 
 -   date (example must use functions from **lubridate**)
 
 ```{r}
 #| label: wd-3-date
+
+# from lab 5
+
+filtered_crime_scene_report <- crime_scene_report|>
+  mutate(date = ymd(date))|> # convert dates into date format 
+  filter(type == "murder",
+         date == "2018-01-15",
+         city == "SQL City") 
 
 ```
 
