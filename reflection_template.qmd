@@ -58,7 +58,11 @@ ages_tab <- read_table(file = here::here("Week 2", "Check-ins", "Ages_Data", "ag
 
 ```{r}
 #| label: wd-2
+# from lab 2, Q6
 
+teacher_evals_clean |>
+  filter(if_any(everything(), ~is.na(.))) |>
+  select(course_id,teacher_id, everything())
 
 
 ```
@@ -109,17 +113,7 @@ suspect_killer <- drivers_license|>
 
 ```{r}
 #| label: wd-3-factor
-# from lab 4
-ca_childcare <- ca_childcare |> 
-  mutate(county_name = str_remove(county_name, " County")) |> # removes county and blank space before
-  mutate(region = fct_collapse(county_name,  "Superior California" = c("Butte", "Colusa", "El Dorado",
-                                                         "Glenn", "Lassen", "Modoc",
-                                                         "Nevada", "Placer", "Plumas",
-                                                         "Sacramento", "Shasta", "Sierra",
-                                                         "Siskiyou", "Sutter", "Tehama",
-                                                         "Yolo", "Yuba", ...
 
-                               # fct_collpase involves 20+ lines, shortened for readability 
 ```
 
 -   date (example must use functions from **lubridate**)
@@ -158,6 +152,17 @@ filtered_crime_scene_report <- crime_scene_report|>
 ```{r}
 #| label: wd-4-factor
 
+# from lab 4
+ca_childcare <- ca_childcare |> 
+  mutate(county_name = str_remove(county_name, " County")) |> # removes county and blank space before
+  mutate(region = fct_collapse(county_name,  "Superior California" = c("Butte", "Colusa", "El Dorado",
+                                                         "Glenn", "Lassen", "Modoc",
+                                                         "Nevada", "Placer", "Plumas",
+                                                         "Sacramento", "Shasta", "Sierra",
+                                                         "Siskiyou", "Sutter", "Tehama",
+                                                         "Yolo", "Yuba", ...
+
+                               # fct_collpase involves 20+ lines, shortened for readability 
 ```
 
 -   date (example must use functions from **lubridate**)
@@ -187,6 +192,12 @@ filtered_crime_scene_report <- crime_scene_report|>
 
 ```{r}
 #| label: wd-5-inner
+# from lab 5
+
+interview_witness <- filtered_person|> #get interviews of witnesses
+  inner_join(interview,
+             by = c("id" = "person_id"))
+
 
 ```
 
@@ -282,6 +293,16 @@ I've done this in the following provided assignments:
 
 ```{r}
 #| label: dvs-1-num
+# from lab 4
+
+ggplot(ca_childcare, aes(x = mhi_2018, y = mc_infant)) +
+  geom_point(color = "blue", size = 3, alpha = 0.4) + 
+  geom_smooth(method = "lm", color = "red", se = FALSE) +
+  labs(
+    title = "Full Time median weekly price for center-based childcare for an infant in California",
+    x= "Median household income (2018 dollars)",
+    y="")+
+theme_minimal()
 
 ```
 
@@ -289,6 +310,15 @@ I've done this in the following provided assignments:
 
 ```{r}
 #| label: dvs-2-num-cat
+# from lab 4
+
+ggplot(lowest_infant_care_2018, aes(x=median_care, y=reorder(region, -median_care)))+
+  geom_col(fill = "steelblue")+
+  facet_wrap(~study_year)+
+  ggtitle("2018 Infant care cost by region") +
+  ylab("") +
+  xlab("Median Care cost in 2018 dollars") +
+  theme_minimal()
 
 ```
 
@@ -296,7 +326,15 @@ I've done this in the following provided assignments:
 
 ```{r}
 #| label: dvs-2-cat
+# from lab 4
 
+ggplot(lowest_infant_care, aes(x=median_care, y=reorder(region, -median_care)))+
+  geom_col(fill = "steelblue")+
+  facet_wrap(~study_year)+
+  ggtitle("2008 vs 2018 Infant care cost by region") +
+  ylab("") +
+  xlab("Median Care cost in 2018 dollars") +
+  theme_minimal()
 ```
 
 -   dates (timeseries plot)
@@ -335,6 +373,35 @@ I've done this in the following provided assignments:
 
 ```{r}
 #| label: dvs-3-1
+# from lab 4
+
+ggplot(median_prices_regional, aes(x=study_year,y=price_care, color = region))+
+   geom_point(position = position_dodge(width = 0)
+              , alpha = 0.8,
+              size = 0.5) +  
+  geom_smooth(method = "loess",
+              se = TRUE,
+              alpha = 0.5)+
+  facet_wrap(~ age_group,
+             nrow = 1)+
+  scale_y_continuous()+
+  labs(
+  title = "Weekly Median Price for Center-Based Childcare ($)",
+  x = "Study Year",
+  y = "",
+  color = "California Region")+
+  scale_x_continuous(breaks = seq(2008,2018,2))+
+  scale_y_continuous(limits = c(100,500))+
+  scale_color_manual(values = c("San Francisco Bay Area" = "green",
+                                "Orange County" = "grey",
+                                "Los Angeles County" = "pink",
+                                "Northern San Joaquin Valley" = "orange",
+                                "Central Coast" = "yellow",
+                                "Inland Empire" = "blue",
+                                "Superior California" = "maroon",
+                                "Southern San Joaquin Valley" = "red",
+                                "San Diego - Imperial" = "brown",
+                                "North Coast" = "darkgrey"))+ ...
 
 ```
 
@@ -343,13 +410,57 @@ I've done this in the following provided assignments:
 ```{r}
 #| label: dvs-3-2
 
+
+
 ```
 
 -   I can be creative...
 
 ```{r}
 #| label: dvs-3-3
+# from lab 4
 
+ggplot(median_prices_regional, aes(x=study_year,y=price_care, color = region))+
+   geom_point(position = position_dodge(width = 0)
+              , alpha = 0.8,
+              size = 0.5) +  
+  geom_smooth(method = "loess",
+              se = TRUE,
+              alpha = 0.5)+
+  facet_wrap(~ age_group,
+             nrow = 1)+
+  scale_y_continuous()+
+  labs(
+  title = "Weekly Median Price for Center-Based Childcare ($)",
+  x = "Study Year",
+  y = "",
+  color = "California Region")+
+  scale_x_continuous(breaks = seq(2008,2018,2))+
+  scale_y_continuous(limits = c(100,500))+
+  scale_color_manual(values = c("San Francisco Bay Area" = "green",
+                                "Orange County" = "grey",
+                                "Los Angeles County" = "pink",
+                                "Northern San Joaquin Valley" = "orange",
+                                "Central Coast" = "yellow",
+                                "Inland Empire" = "blue",
+                                "Superior California" = "maroon",
+                                "Southern San Joaquin Valley" = "red",
+                                "San Diego - Imperial" = "brown",
+                                "North Coast" = "darkgrey"))+
+  theme(
+    axis.text = element_text(size = 6),
+    panel.border = element_rect(color = "black", fill = NA),
+    aspect.ratio = 1,
+    legend.title = element_text(size = 10),
+    legend.text = element_text(size = 8),
+    legend.key.height = unit(-1,"cm"),
+    legend.key.size = unit(1,"cm"),
+    legend.key.spacing.y = unit(0.1,"cm"),
+    panel.background = element_rect(fill = "white", color = NA),
+    panel.grid = element_line(color = "grey", size = 0.15),
+    strip.background = element_rect(fill = "grey", color = "black", size = 1),
+    title = element_text(size = 7.5)
+    )
 ```
 
 **DVS-4: I can calculate numerical summaries of variables.**
@@ -358,7 +469,13 @@ I've done this in the following provided assignments:
 
 ```{r}
 #| label: dvs-4-summarize
+# from lab 4
 
+lowest_infant_care <- ca_childcare|>
+  filter(study_year %in% c(2018,2008))|>
+  group_by(study_year, region)|>
+  summarize(median_care = median(mc_infant), .groups = "drop")|>
+  arrange(desc(median_care))
 ```
 
 -   Example using `across()`
@@ -390,6 +507,14 @@ I've done this in the following provided assignments:
 
 ```{r}
 #| label: dvs-6-1
+# from lab 4
+
+combined_lowest <-bind_rows(
+  lowest_2018,
+  lowest_2008)|>
+  rename("Lowest Median Regional Price for Infant care in California" = "median_care",
+         "Year" = "study_year")
+print(combined_lowest)
 
 ```
 
