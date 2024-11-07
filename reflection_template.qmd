@@ -11,7 +11,7 @@ execute:
   echo: true
 ---
 
-[**My Grade:**]{.underline} I believe my grade equivalent to course work evidenced below to be an A-.
+[**My Grade:**]{.underline} I believe my grade equivalent to course work evidenced below to be an B
 
 [**Learning Objective Evidence:**]{.underline} In the code chunks below, provide code from Lab or Challenge assignments where you believe you have demonstrated proficiency with the specified learning target. Be sure to specify **where** the code came from (e.g., Lab 4 Question 2).
 
@@ -645,7 +645,10 @@ print(combined_lowest)
 
 ```{r}
 #| label: dsm-2-1
+# 
+species_mod <- aov()
 
+summary(species_mod)
 ```
 
 -   Example 2
@@ -659,14 +662,22 @@ print(combined_lowest)
 
 <!-- How did you revise your thinking throughout the course? How did you revise your thinking on the code examples you have provided in your portfolio? -->
 
+One of the biggest ways of revising my thinking was through streamlining operations. I accomplished this mostly through reducing the number of temporary objects found in my code which helps compress operations and keeps code tidy. \
+
 <!-- For the revisions included in your Portfolio, to help me understand the nature of your revisions, please denote somehow the feedback I provided you (e.g., boldface, italics, colored text) before your revisions. -->
 
 ## Extending My Thinking
 
 <!-- How did you extended your thinking throughout the course? How did you extend your thinking on the code examples you have provided in your portfolio? -->
 
+The biggest way I have extended my thinking is how I consider data organization to help it be easier to process and/or understand. organizing the data in a way which reduces the number of required transformations or joining of datasets helps the raw data be easier to analyze.
+
 ## Peer Support & Collaboration
 
 <!-- Include an image or a description of feedback you gave that you are proud of (either in a peer review or in Discord). -->
 
+Often times during practice activities in class groups nearby will ask for help and instead of providing them the answer directly I will help lead them to finding it themselves.
+
 <!-- Include a description of how you grew as a collaborator through the weekly pair programming activities.   -->
+
+I think the most beneficial aspect is being exposed to different people's way of thinking about the approach to a problem. This helps both in communicating goals/processes to people who think differently and also help expand my own line of thinking.
