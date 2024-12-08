@@ -310,6 +310,19 @@ ggplot(all_simulations, aes(x = simulated_means)) +
 ```{r}
 #| label: r-2-2
 
+suspect_killer <- drivers_license|>
+  filter(gender == "male",
+         str_detect(plate_number, "H42W"))|>
+  rename(license_id = id) |>
+ inner_join(person, by = "license_id") |>
+  inner_join(get_fit_now_member, by = c("id" = "person_id", "name" = "name"))|>
+  rename(membership_id = id.y)|>
+  inner_join(get_fit_now_check_in, by = "membership_id")|>
+  filter(check_in_date == "20180109",
+         str_detect(membership_id, "^48Z"))
+
+# from lab 5
+
 ```
 
 -   Example of function formatting
@@ -916,9 +929,11 @@ summary(species_mod)
 
 <!-- How did you revise your thinking throughout the course? How did you revise your thinking on the code examples you have provided in your portfolio? -->
 
-One of the biggest ways of revising my thinking was through streamlining operations. I accomplished this mostly through reducing the number of temporary objects found in my code which helps compress operations and keeps code tidy.\
+One of the biggest ways of revising my thinking was through streamlining operations. I accomplished this mostly through reducing the number of temporary objects found in my code which helps compress operations and keeps code tidy. Another way I have revised my thinking is how I think about my approach to issues, rather than trying to work front to back I think about what I need in the last step and then move backwards from there in terms of how I need to structure my process.
 
 <!-- For the revisions included in your Portfolio, to help me understand the nature of your revisions, please denote somehow the feedback I provided you (e.g., boldface, italics, colored text) before your revisions. -->
+
+Feedback that led to new code that was included in the portfolio is written in bolt and italics above the section it is used.
 
 ## Extending My Thinking
 
@@ -930,7 +945,7 @@ The biggest way I have extended my thinking is how I consider data organization 
 
 <!-- Include an image or a description of feedback you gave that you are proud of (either in a peer review or in Discord). -->
 
-Often times during practice activities in class groups nearby will ask for help and instead of providing them the answer directly I will help lead them to finding it themselves.
+Often times during practice activities in class groups nearby will ask for help and instead of providing them the answer directly I will help lead them to finding it themselves. From peer review I thought my best feedback was the following (for lab 3) "Generally the lab does a good job accomplishing what it is supposed to however there are a few places to improve in terms of how someone interpreting the document could be helped out. The first big thing is to give some textual context of the tibble tables so they can know what they are saying. Usually just one line of text would make it clear what each table is displaying. When summarizing the teacher demographic it may be useful to use a graph in some situations as it will help a viewer have a greater understanding of the distributions within the demographic. Overall great work - just consider a viewer who lacks context of the lab when finalizing document.". I thought this was the best because I was able to involve not only helping them think about the correct code but also the way that they would use similar code in the future when creating reports.
 
 <!-- Include a description of how you grew as a collaborator through the weekly pair programming activities.   -->
 
