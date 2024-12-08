@@ -114,6 +114,8 @@ suspect_killer <- drivers_license|>
 ```{r}
 #| label: wd-3-factor
 
+
+
 ```
 
 -   date (example must use functions from **lubridate**)
@@ -138,12 +140,21 @@ filtered_crime_scene_report <- crime_scene_report|>
 ```{r}
 #| label: wd-4-numeric
 
+fish_challenge <- fish|>
+  mutate(length = length/10)
+
+# from Challenge 7 
 ```
 
 -   character -- specifically a string (example must use functions from **stringr**)
 
 ```{r}
 #| label: wd-4-string
+
+ca_childcare <- ca_childcare |> 
+  mutate(county_name = str_remove(county_name, " County")) 
+  
+# from lab 4
 
 ```
 
@@ -169,6 +180,11 @@ ca_childcare <- ca_childcare |>
 
 ```{r}
 #| label: wd-4-date
+
+filtered_crime_scene_report <- crime_scene_report|>
+  mutate(date = ymd(date))
+
+# from lab 4
 
 ```
 
@@ -231,6 +247,13 @@ interview_witness <- filtered_person|> #get interviews of witnesses
 ```{r}
 #| label: wd-7-long
 
+results_long <- pivot_longer(
+  results_table,
+  cols = everything(),
+  names_to = "ncorrect",
+  values_to = "count")
+
+# from lab 9 
 ```
 
 -   `pivot_wider()`
@@ -238,6 +261,12 @@ interview_witness <- filtered_person|> #get interviews of witnesses
 ```{r}
 #| label: wd-7-wide
 
+survey_data_type <- surveys|>
+  map_chr(class)|>
+  enframe(name = "Variable", value = "DataType")|>
+  pivot_wider(names_from = Variable, values_from = DataType)
+
+# from lab 8
 ```
 
 ## Reproducibility
@@ -246,12 +275,33 @@ interview_witness <- filtered_person|> #get interviews of witnesses
 
 I've done this in the following provided assignments:
 
+Lab
+
 **R-2: I can write well documented and tidy code.**
 
 -   Example of **ggplot2** plotting
 
 ```{r}
 #| label: r-2-1
+
+ggplot(all_simulations, aes(x = simulated_means)) +
+  geom_histogram(binwidth = 0.2,
+                 fill = "steelblue",
+                 color = "black",
+                 alpha = 0.7) +
+  facet_wrap(~n, scales = "free_y", 
+             labeller = as_labeller(c(`10` = "n = 10",
+                                      `100` = "n = 100",
+                                      
+                                      `1000` = "n = 1000",
+                                      `10000` = "n = 10000"))) +
+  labs(
+    title = "Distribution of Simulated Means by Sample Size",
+    x = "Simulated Means",
+    y = "Frequency"
+)
+
+# from lab 9 
 
 ```
 
@@ -266,7 +316,12 @@ I've done this in the following provided assignments:
 
 ```{r}
 #| label: r-2-3
+rescale_column <- function(data_frame, ...) {
+  data_frame |>
+    mutate(across(c(...), ~ rescale_01(.)))
+}
 
+# From Lab 7 
 ```
 
 **R-3: I can write robust programs that are resistant to changes in inputs.**
@@ -342,6 +397,25 @@ ggplot(lowest_infant_care, aes(x=median_care, y=reorder(region, -median_care)))+
 ```{r}
 #| label: dvs-2-date
 
+ggplot(median_prices_regional, aes(x=study_year,y=price_care, color = region))+
+   geom_point(position = position_dodge(width = 0)
+              , alpha = 0.8,
+              size = 0.5) +  
+  geom_smooth(method = "loess",
+              se = TRUE,
+              alpha = 0.5)+
+  facet_wrap(~ age_group,
+             nrow = 1)+
+  scale_y_continuous()+
+  labs(
+  title = "Weekly Median Price for Center-Based Childcare ($)",
+  x = "Study Year",
+  y = "",
+  color = "California Region")
+
+# from lab 4
+
+
 ```
 
 **DVS-2: I use plot modifications to make my visualization clear to the reader.**
@@ -364,6 +438,8 @@ ggplot(lowest_infant_care, aes(x=median_care, y=reorder(region, -median_care)))+
 
 ```{r}
 #| label: dvs-2-3
+
+
 
 ```
 
@@ -483,6 +559,14 @@ lowest_infant_care <- ca_childcare|>
 ```{r}
 #| label: dvs-4-across
 
+missing_values <- fish|>
+ summarise(
+    total_missing_observations = sum((across(everything(), ~ sum(is.na(.))))),
+    variables_missing = names(which(colSums(is.na(fish))>0))
+  )
+  
+# from lab 7 
+
 ```
 
 **DVS-5: I can find summaries of variables across multiple groups.**
@@ -492,13 +576,74 @@ lowest_infant_care <- ca_childcare|>
 ```{r}
 #| label: dvs-5-1
 
+missing_values_fish <- fish|>
+  map_int(~sum(is.na(.)))|>
+  enframe(name = "Variable Name", value = "Number of Missing Values")
+
+# from lab 8
+
 ```
 
 -   Example 2
 
 ```{r}
 #| label: dvs-5-2
-
+summary_table <- evals|>
+  group_by(teacher_id)|>
+  summarize(
+    sex = first(sex),
+    seniority = mean(seniority, na.rm = TRUE),
+    academic_degree = first(academic_degree),
+    .groups = "drop"
+  )|>
+  mutate(seniority_level = if_else(seniority <= 4, "Junior", "Senior"))|>
+  count(sex,seniority_level, academic_degree)|>
+  pivot_wider(names_from = c(sex, seniority_level, academic_degree), values_from = n)|>
+  summarize(
+    Male = sum(c(male_Junior_dr,
+                 male_Junior_ma,
+                 male_Junior_no_dgr,
+                 male_Junior_prof,
+                 male_Senior_dr,
+                 male_Senior_ma,
+                 male_Senior_no_dgr,
+                 male_Senior_prof), na.rm = TRUE),
+  Female = sum(c(female_Junior_dr,
+                 female_Junior_ma,
+                 female_Junior_no_dgr,
+                 female_Junior_prof,
+                 female_Senior_dr,
+                 female_Senior_ma), na.rm = TRUE),
+  "Junior (Less than 4 years)"  = sum(c(male_Junior_dr,
+                 male_Junior_ma,
+                 male_Junior_no_dgr,
+                 male_Junior_prof,
+                 female_Junior_dr,
+                 female_Junior_ma,
+                 female_Junior_no_dgr,
+                 female_Junior_prof), na.rm = TRUE),
+   "Senior (More than 4 years)" = sum(c(male_Senior_dr,
+                 male_Senior_ma,
+                 male_Senior_no_dgr,
+                 male_Senior_prof,
+                 female_Senior_dr,
+                 female_Senior_ma), na.rm = TRUE),
+  "No Degree" = sum(c(male_Senior_no_dgr,
+                    male_Junior_no_dgr,
+                    female_Junior_no_dgr), na.rm = TRUE),
+  Masters = sum(c(male_Senior_ma,
+                    male_Junior_ma,
+                    female_Junior_ma,
+                    female_Senior_ma), na.rm = TRUE),
+  Doctorate = sum(c(male_Senior_dr,
+                    male_Junior_dr,
+                    female_Junior_dr,
+                    female_Senior_dr), na.rm = TRUE),
+  Professor = sum(c(male_Senior_prof,
+                    male_Junior_prof,
+                    female_Junior_prof), na.rm = TRUE)
+  )
+# from lab 8 
 ```
 
 **DVS-6: I can create tables which make my summaries clear to the reader.**
@@ -522,7 +667,35 @@ print(combined_lowest)
 
 ```{r}
 #| label: dvs-6-2
+pretty_summary_table_gt <- summary_table |>
+  gt() |>
+  tab_header(
+    title = "Instructor Evaluations Demographics"
+  ) |>
+  tab_style(
+    style = cell_fill(color = "lightgray"),
+    locations = cells_body(rows = seq(1, nrow(summary_table), 2))
+  ) |>
+  tab_options(
+    table.font.size = px(14),
+    table.border.top.color = "black",
+    table.border.top.width = px(2),
+    table.border.bottom.color = "black",
+    table.border.bottom.width = px(2),
+    table.border.left.color = "black",
+    table.border.left.width = px(2),
+    table.border.right.color = "black",
+    table.border.right.width = px(2),  
+    row.striping.include_table_body = TRUE,  
+    row.striping.background_color = "lightgray", 
+    data_row.padding = px(5),  
+    column_labels.font.size = px(14), 
+    column_labels.font.weight = "bold",
+    column_labels.background.color = "lightblue", 
+    table.width = pct(100)  
+  )
 
+# from lab 9 
 ```
 
 **DVS-7: I show creativity in my tables.**
@@ -532,13 +705,48 @@ print(combined_lowest)
 ```{r}
 #| label: dvs-7-1
 
+pretty_summary_table_gt <- summary_table |>
+  gt() |>
+  tab_header(
+    title = "Instructor Evaluations Demographics"
+  ) |>
+  tab_style(
+    style = cell_fill(color = "lightgray"),
+    locations = cells_body(rows = seq(1, nrow(summary_table), 2))
+  ) |>
+  tab_options(
+    table.font.size = px(14),
+    table.border.top.color = "black",
+    table.border.top.width = px(2),
+    table.border.bottom.color = "black",
+    table.border.bottom.width = px(2),
+    table.border.left.color = "black",
+    table.border.left.width = px(2),
+    table.border.right.color = "black",
+    table.border.right.width = px(2),  
+    row.striping.include_table_body = TRUE,  
+    row.striping.background_color = "lightgray", 
+    data_row.padding = px(5),  
+    column_labels.font.size = px(14), 
+    column_labels.font.weight = "bold",
+    column_labels.background.color = "lightblue", 
+    table.width = pct(100)  
+  )
+
+# from lab 9 
 ```
 
 -   Example 2
 
 ```{r}
 #| label: dvs-7-2
+pretty_summary_table_kable <- summary_table|>
+   kable(caption = "Instructor Evaluations Demographics") |>
+   kable_styling(bootstrap_options = c("striped", "hover", "condensed", "bordered"), 
+                 full_width = TRUE, 
+                 font_size = 14)
 
+# from lab 9 
 ```
 
 ## Program Efficiency
@@ -550,13 +758,25 @@ print(combined_lowest)
 ```{r}
 #| label: pe-1-one-call
 
+rescale_column <- function(data_frame, ...) {
+  data_frame |>
+    mutate(across(c(...), ~ rescale_01(.)))
+}
+
+# from lab 7
 ```
 
 -   `across()`
 
 ```{r}
 #| label: pe-1-across
+missing_values <- fish|>
+ summarise(
+    total_missing_observations = sum((across(everything(), ~ sum(is.na(.))))),
+    variables_missing = names(which(colSums(is.na(fish))>0))
+  )
 
+# lab 7
 ```
 
 -   `map()` functions
@@ -564,6 +784,11 @@ print(combined_lowest)
 ```{r}
 #| label: pe-1-map-1
 
+missing_values_fish <- fish|>
+  map_int(~sum(is.na(.)))|>
+  enframe(name = "Variable Name", value = "Number of Missing Values")
+
+# from lab 8 
 ```
 
 **PE-2: I can write functions to reduce repetition in my code.**
@@ -572,14 +797,25 @@ print(combined_lowest)
 
 ```{r}
 #| label: pe-2-1
+rescale_01 <- function(value){
+  if ((length(value) > 1) & is.numeric(value)) {
+   (value = (value - min(value, na.rm = TRUE)) / 
+           (max(value, na.rm = TRUE) - min(value, na.rm = TRUE)))
+  }}
 
+# from lab 7 
 ```
 
 -   Function that operates on data frames
 
 ```{r}
 #| label: pe-2-2
+rescale_column <- function(data_frame, ...) {
+  data_frame |>
+    mutate(across(c(...), ~ rescale_01(.)))
+}
 
+# from lab 7 
 ```
 
 **PE-3:I can use iteration to reduce repetition in my code.**
@@ -589,6 +825,12 @@ print(combined_lowest)
 ```{r}
 #| label: pe-3-across
 
+rescale_column <- function(data_frame, ...) {
+  data_frame |>
+    mutate(across(c(...), ~ rescale_01(.)))
+}
+
+# from lab 7 
 ```
 
 -   `map()` function with **one** input (e.g., `map()`, `map_chr()`, `map_dbl()`, etc.)
@@ -630,13 +872,25 @@ print(combined_lowest)
 ```{r}
 #| label: dsm-1-1
 
+randomBabies <- function(nBabies = 4){
+  step1 <- sample(1:nBabies, nBabies, replace = FALSE)
+  step2 <- sum(step1 == 1:nBabies)
+  return(step2)
+  
+# from lab 9 
 ```
 
 -   Example 2
 
 ```{r}
 #| label: dsm-1-2
+simulate_means <- function(n, df){
+  map_dbl(.x = 1:n, 
+          .f = ~rchisq(n = 100, df =df) |> mean()
+          )
+}
 
+# from lab 9 
 ```
 
 **DSSM-2: I can conduct common statistical analyses in R.**
@@ -662,7 +916,7 @@ summary(species_mod)
 
 <!-- How did you revise your thinking throughout the course? How did you revise your thinking on the code examples you have provided in your portfolio? -->
 
-One of the biggest ways of revising my thinking was through streamlining operations. I accomplished this mostly through reducing the number of temporary objects found in my code which helps compress operations and keeps code tidy. \
+One of the biggest ways of revising my thinking was through streamlining operations. I accomplished this mostly through reducing the number of temporary objects found in my code which helps compress operations and keeps code tidy.\
 
 <!-- For the revisions included in your Portfolio, to help me understand the nature of your revisions, please denote somehow the feedback I provided you (e.g., boldface, italics, colored text) before your revisions. -->
 
