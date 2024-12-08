@@ -949,4 +949,4 @@ Often times during practice activities in class groups nearby will ask for help 
 
 <!-- Include a description of how you grew as a collaborator through the weekly pair programming activities.   -->
 
-I think the most beneficial aspect is being exposed to different people's way of thinking about the approach to a problem. This helps both in communicating goals/processes to people who think differently and also help expand my own line of thinking.
+I think the most beneficial aspect is being exposed to different people's way of thinking about the approach to a problem. This helps both in communicating goals/processes to people who think differently and also help expand my own line of thinking. I also think I learned what a bad partner felt like which helped motivate me to adjust to how different people function and focus on the collaboration rather than purely the end objective.
