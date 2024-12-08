@@ -6,16 +6,20 @@ editor: visual
 
 **Answer each of the following questions with *one sentence* including a brief explanation.**
 
-1. Finish the sentence with another student’s name: "If [Name of Student] doesn’t earn an A, then nobody should, because..." Explain your choice and your reasoning.
+1.  Finish the sentence with another student’s name: "If \[Name of Student\] doesn’t earn an A, then nobody should, because..." Explain your choice and your reasoning.
 
+2.  What was the most difficult part of the class for you? List a general topic, a specific problem, a kind of work we did, etc. and explain why.
 
-2. What was the most difficult part of the class for you? List a general topic, a specific problem, a kind of work we did, etc. and explain why.
+3.  What was the easiest part of the class for you? Explain why.
 
+4.  What part of the class surprised or interested you the most? Explain why.
 
-3. What was the easiest part of the class for you? Explain why.
+5.  Give one piece of advice to a student just beginning a quarter of STAT 331 that will help them be successful in learning.
 
+<!-- -->
 
-4. What part of the class surprised or interested you the most? Explain why.
-
-
-5. Give one piece of advice to a student just beginning a quarter of STAT 331 that will help them be successful in learning.
+1.   If Phillip Prak doesn't earn an A, then nobody should, because he shows effort in everything he does whether it is in preparation or execution, extends help to others, asks precise and important questions, and puts energy into working well with others.
+2.  The most difficult part of this class for me was adjusting to R, since I was used to python there were many small syntax related mistakes I made during the beginning of this classes that significantly slowed down my work and my learning process for new topics.
+3.  The easiest part of this class for me was the use of version control, being used to it in the past for both classes and personal projects it was simple for me to continue to use it especially with RSudio's Git integration.
+4.  The aspect of this class that interested me the most was data visualization as seeing interesting visual or creative representations of data is something I enjoy and consume in my personal life as well as in academic or medical studies.
+5.  If I were to give one piece of advice to a student next quarter I would tell them to think about their order of operations when addressing a problem as that will not only make assignments easier but also make the work more enjoyable.
