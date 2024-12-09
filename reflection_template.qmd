@@ -11,7 +11,7 @@ execute:
   echo: true
 ---
 
-[**My Grade:**]{.underline} I believe my grade equivalent to course work evidenced below to be an B
+[**My Grade:**]{.underline} I believe my grade equivalent to course work evidenced below to be an A.
 
 [**Learning Objective Evidence:**]{.underline} In the code chunks below, provide code from Lab or Challenge assignments where you believe you have demonstrated proficiency with the specified learning target. Be sure to specify **where** the code came from (e.g., Lab 4 Question 2).
 
@@ -24,7 +24,7 @@ execute:
 ```{r}
 #| label: wd-1-csv
 
-# from lab 3 
+# from lab 3 Question 2 
 data <- read_csv(here("data","teacher_evals.csv"))
 
 
@@ -58,7 +58,7 @@ ages_tab <- read_table(file = here::here("Week 2", "Check-ins", "Ages_Data", "ag
 
 ```{r}
 #| label: wd-2
-# from lab 2, Q6
+# from lab 2, Question 6
 
 teacher_evals_clean |>
   filter(if_any(everything(), ~is.na(.))) |>
@@ -99,7 +99,7 @@ suspect_killer <- drivers_license|>
 
 suspect_killer <- drivers_license|>
   filter(gender == "male",
-         str_detect(plate_number, "H42W"))|>
+         str_detect(plate_number, "H42W"))|> # String filtering here 
   rename(license_id = id) |>
  inner_join(person, by = "license_id") |>
   inner_join(get_fit_now_member, by = c("id" = "person_id", "name" = "name"))|>
@@ -114,7 +114,11 @@ suspect_killer <- drivers_license|>
 ```{r}
 #| label: wd-3-factor
 
+# from lab 5 
 
+suspect_killer <- drivers_license|>
+  filter(gender == "male", # factor filtering here
+         str_detect(plate_number, "H42W"))|>
 
 ```
 
@@ -141,9 +145,9 @@ filtered_crime_scene_report <- crime_scene_report|>
 #| label: wd-4-numeric
 
 fish_challenge <- fish|>
-  mutate(length = length/10)
+  mutate(length = length/10) # mutating numeric here 
 
-# from Challenge 7 
+# from Challenge 7 Question 1
 ```
 
 -   character -- specifically a string (example must use functions from **stringr**)
@@ -152,9 +156,9 @@ fish_challenge <- fish|>
 #| label: wd-4-string
 
 ca_childcare <- ca_childcare |> 
-  mutate(county_name = str_remove(county_name, " County")) 
+  mutate(county_name = str_remove(county_name, " County")) # mutating string here
   
-# from lab 4
+# from lab 4 Question 3 
 
 ```
 
@@ -163,9 +167,9 @@ ca_childcare <- ca_childcare |>
 ```{r}
 #| label: wd-4-factor
 
-# from lab 4
+# from lab 4 Question 3 
 ca_childcare <- ca_childcare |> 
-  mutate(county_name = str_remove(county_name, " County")) |> # removes county and blank space before
+  mutate(county_name = str_remove(county_name, " County")) |> 
   mutate(region = fct_collapse(county_name,  "Superior California" = c("Butte", "Colusa", "El Dorado",
                                                          "Glenn", "Lassen", "Modoc",
                                                          "Nevada", "Placer", "Plumas",
@@ -184,7 +188,7 @@ ca_childcare <- ca_childcare |>
 filtered_crime_scene_report <- crime_scene_report|>
   mutate(date = ymd(date))
 
-# from lab 4
+# from lab 5
 
 ```
 
@@ -195,12 +199,22 @@ filtered_crime_scene_report <- crime_scene_report|>
 ```{r}
 #| label: wd-5-left
 
+# from lab 5
+
+interview_witness <- filtered_person |> # Keep all filtered persons
+  left_join(interview, 
+            by = c("id" = "person_id"))
 ```
 
 -   `right_join()`
 
 ```{r}
 #| label: wd-5-right
+# From lab 5
+
+killer_interview <- interview |> # Keep all interviews, even those without a matching suspect_killer
+  right_join(suspect_killer, 
+             by = c("person_id" = "id"))
 
 ```
 
@@ -221,7 +235,16 @@ interview_witness <- filtered_person|> #get interviews of witnesses
 
 ```{r}
 #| label: wd-5-full
-
+# from lab 5
+  filter(gender == "male",
+         str_detect(plate_number, "H42W"))|>
+  rename(license_id = id) |>
+ full_join(person, by = "license_id") |>
+  inner_join(get_fit_now_member, by = c("id" = "person_id", "name" = "name"))|>
+  rename(membership_id = id.y)|>
+  inner_join(get_fit_now_check_in, by = "membership_id")|>
+  filter(check_in_date == "20180109",
+         str_detect(membership_id, "^48Z"))
 ```
 
 **WD-6: I can use filtering joins to filter rows from a dataframe.**
@@ -230,6 +253,12 @@ interview_witness <- filtered_person|> #get interviews of witnesses
 
 ```{r}
 #| label: wd-6-semi
+# from lab 5
+
+suspect_boss <- person |>
+  semi_join(
+    facebook_event_checkin |> filter(event_name == "SQL Symphony Concert", str_detect(date, "201712")) |> group_by(person_id) |> filter(n() == 3),
+    by = c("id" = "person_id")
 
 ```
 
@@ -237,6 +266,9 @@ interview_witness <- filtered_person|> #get interviews of witnesses
 
 ```{r}
 #| label: wd-6-anti
+# from lab 5
+interview_boss <- suspect_boss|>
+ anti_join(interview, by = c("id" = "person_id")) # see if boss was interviewed at all 
 
 ```
 
@@ -253,7 +285,7 @@ results_long <- pivot_longer(
   names_to = "ncorrect",
   values_to = "count")
 
-# from lab 9 
+# from lab 9 Question 3 
 ```
 
 -   `pivot_wider()`
@@ -266,7 +298,7 @@ survey_data_type <- surveys|>
   enframe(name = "Variable", value = "DataType")|>
   pivot_wider(names_from = Variable, values_from = DataType)
 
-# from lab 8
+# from lab 8 Question 1 
 ```
 
 ## Reproducibility
@@ -275,7 +307,7 @@ survey_data_type <- surveys|>
 
 I've done this in the following provided assignments:
 
-Lab
+Tables in Challenge 9, Entirety of lab 4 and 5, using here package in lab 2.
 
 **R-2: I can write well documented and tidy code.**
 
@@ -286,7 +318,7 @@ Lab
 
 ggplot(all_simulations, aes(x = simulated_means)) +
   geom_histogram(binwidth = 0.2,
-                 fill = "steelblue",
+                 fill = "#FFE4E1",
                  color = "black",
                  alpha = 0.7) +
   facet_wrap(~n, scales = "free_y", 
@@ -301,7 +333,7 @@ ggplot(all_simulations, aes(x = simulated_means)) +
     y = "Frequency"
 )
 
-# from lab 9 
+# from lab 9 Question 8 
 
 ```
 
@@ -334,7 +366,7 @@ rescale_column <- function(data_frame, ...) {
     mutate(across(c(...), ~ rescale_01(.)))
 }
 
-# From Lab 7 
+# From Lab 7 Question 8 
 ```
 
 **R-3: I can write robust programs that are resistant to changes in inputs.**
@@ -343,13 +375,34 @@ rescale_column <- function(data_frame, ...) {
 
 ```{r}
 #| label: r-3-example
+# from lab 7 Question 4
+rescale_01 <- function(value){
+  if ((length(value) >= 1) & is.numeric(value)) {
+   return((value = (value - min(value, na.rm = TRUE)) / 
+           (max(value, na.rm = TRUE) - min(value, na.rm = TRUE))))
+}}
 
+#Only returns the adjusted value if the input value is numeric and greater than or equal to 1.
 ```
 
 -   Example of function stops
 
 ```{r}
 #| label: r-3-function-stops
+simulate_means <- function(n = 100, df = 1) {
+  if (!is.numeric(n) || n <= 0 || n != round(n)) {
+    stop("`n` must be a positive integer.")
+  }
+  if (!is.numeric(df) || df <= 0) {
+    stop("`df` must be a positive number.")
+  }
+  
+
+  map_dbl(.x = seq_len(n), 
+          .f = ~rchisq(n = 100, df = df) |> mean())
+}
+
+  # from lab 9 Question 4, resistant to change in n and df values, prevents non numeric, negative, and float inputs.
 
 ```
 
@@ -361,7 +414,7 @@ rescale_column <- function(data_frame, ...) {
 
 ```{r}
 #| label: dvs-1-num
-# from lab 4
+# from lab 4 Question 7
 
 ggplot(ca_childcare, aes(x = mhi_2018, y = mc_infant)) +
   geom_point(color = "blue", size = 3, alpha = 0.4) + 
@@ -378,7 +431,7 @@ theme_minimal()
 
 ```{r}
 #| label: dvs-2-num-cat
-# from lab 4
+# from lab 4 Question 5
 
 ggplot(lowest_infant_care_2018, aes(x=median_care, y=reorder(region, -median_care)))+
   geom_col(fill = "steelblue")+
@@ -394,7 +447,7 @@ ggplot(lowest_infant_care_2018, aes(x=median_care, y=reorder(region, -median_car
 
 ```{r}
 #| label: dvs-2-cat
-# from lab 4
+# from lab 4 Question 5 
 
 ggplot(lowest_infant_care, aes(x=median_care, y=reorder(region, -median_care)))+
   geom_col(fill = "steelblue")+
@@ -426,7 +479,7 @@ ggplot(median_prices_regional, aes(x=study_year,y=price_care, color = region))+
   y = "",
   color = "California Region")
 
-# from lab 4
+# from lab 4 Question 6
 
 
 ```
@@ -438,12 +491,39 @@ ggplot(median_prices_regional, aes(x=study_year,y=price_care, color = region))+
 ```{r}
 #| label: dvs-2-1
 
+# from lab 2 Question 16
+
+ggplot(data = surveys,
+       mapping = aes(x=species, y=weight)) +
+      geom_jitter(color = "steelblue", alpha = 0.18) + 
+      geom_boxplot(outliers = FALSE, alpha = 0.6) +
+      labs(x = "Species of Rodent",
+           y = "",
+           title = "Weight of Rodent in Grams") +
+      theme(axis.text.x = element_text(angle=45,hjust= 1)) 
 ```
 
 -   I can modify the text in my plot to be more readable
 
 ```{r}
 #| label: dvs-2-2
+# from lab 4 Question 6, beginning of plot code cut off to make more readable
+
+theme(
+    axis.text = element_text(size = 6), # adjustment of text size 
+    panel.border = element_rect(color = "black", fill = NA),
+    aspect.ratio = 1,
+    legend.title = element_text(size = 10), # text size adjustment 
+    legend.text = element_text(size = 8), # text size adjustment 
+    legend.key.height = unit(-1,"cm"), # changing of location to make more readable
+    legend.key.size = unit(1,"cm"),
+    legend.key.spacing.y = unit(0.1,"cm"), # adjusted spacing to make more readable
+    panel.background = element_rect(fill = "white", color = NA),
+    panel.grid = element_line(color = "grey", size = 0.15),
+    strip.background = element_rect(fill = "grey", color = "black", size = 1),
+    title = element_text(size = 7.5) # changing to make more readable 
+    )
+
 
 ```
 
@@ -451,18 +531,35 @@ ggplot(median_prices_regional, aes(x=study_year,y=price_care, color = region))+
 
 ```{r}
 #| label: dvs-2-3
+# from lab 4 Question 6
+median_prices_regional <- ca_childcare |> # change names and create new variable of age gorup 
+  rename("Infant" = "mc_infant",
+         "Toddler" = "mc_toddler",
+         "Preschool" = "mc_preschool")|>
+  pivot_longer(
+    cols = c(Infant,
+             Toddler,
+             Preschool),
+    names_to = "age_group",
+    values_to = "price_care")|>
+  group_by(region,study_year,age_group)
+  
+median_prices_regional <- median_prices_regional|> #Set order for graphs 
+  mutate(age_group = factor(age_group, levels = c("Infant", "Toddler", "Preschool")))
 
+median_prices_regional <- median_prices_regional |> #Set Order of regions
+  mutate(region = factor(region, levels = c("San Francisco Bay Area",
+                                            "Orange County",
+                                            "Los Angeles County",
+                                            "Northern San Joaquin Valley",
+                                            "Central Coast",
+                                            "Inland Empire",
+                                            "Superior California",
+                                            "Southern San Joaquin Valley",
+                                            "San Diego - Imperial",
+                                            "North Coast"
+                                            )))
 
-
-```
-
-**DVS-3: I show creativity in my visualizations**
-
--   I can use non-standard colors
-
-```{r}
-#| label: dvs-3-1
-# from lab 4
 
 ggplot(median_prices_regional, aes(x=study_year,y=price_care, color = region))+
    geom_point(position = position_dodge(width = 0)
@@ -478,52 +575,8 @@ ggplot(median_prices_regional, aes(x=study_year,y=price_care, color = region))+
   title = "Weekly Median Price for Center-Based Childcare ($)",
   x = "Study Year",
   y = "",
-  color = "California Region")+
-  scale_x_continuous(breaks = seq(2008,2018,2))+
-  scale_y_continuous(limits = c(100,500))+
-  scale_color_manual(values = c("San Francisco Bay Area" = "green",
-                                "Orange County" = "grey",
-                                "Los Angeles County" = "pink",
-                                "Northern San Joaquin Valley" = "orange",
-                                "Central Coast" = "yellow",
-                                "Inland Empire" = "blue",
-                                "Superior California" = "maroon",
-                                "Southern San Joaquin Valley" = "red",
-                                "San Diego - Imperial" = "brown",
-                                "North Coast" = "darkgrey"))+ ...
-
-```
-
--   I can use annotations
-
-```{r}
-#| label: dvs-3-2
-
-
-
-```
-
--   I can be creative...
-
-```{r}
-#| label: dvs-3-3
-# from lab 4
-
-ggplot(median_prices_regional, aes(x=study_year,y=price_care, color = region))+
-   geom_point(position = position_dodge(width = 0)
-              , alpha = 0.8,
-              size = 0.5) +  
-  geom_smooth(method = "loess",
-              se = TRUE,
-              alpha = 0.5)+
-  facet_wrap(~ age_group,
-             nrow = 1)+
-  scale_y_continuous()+
-  labs(
-  title = "Weekly Median Price for Center-Based Childcare ($)",
-  x = "Study Year",
-  y = "",
-  color = "California Region")+
+  color = "California Region",
+  fill = "region")+
   scale_x_continuous(breaks = seq(2008,2018,2))+
   scale_y_continuous(limits = c(100,500))+
   scale_color_manual(values = c("San Francisco Bay Area" = "green",
@@ -550,6 +603,69 @@ ggplot(median_prices_regional, aes(x=study_year,y=price_care, color = region))+
     strip.background = element_rect(fill = "grey", color = "black", size = 1),
     title = element_text(size = 7.5)
     )
+
+
+```
+
+**DVS-3: I show creativity in my visualizations**
+
+-   I can use non-standard colors
+
+```{r}
+#| label: dvs-3-1
+# from lab 9 Quesetion 8
+
+ggplot(all_simulations, aes(x = simulated_means)) +
+  geom_histogram(binwidth = 0.2,
+                 fill = "#FFE4E1",
+                 color = "black",
+                 alpha = 0.7) +
+  facet_wrap(~n, scales = "free_y", 
+             labeller = as_labeller(c(`10` = "n = 10",
+                                      `100` = "n = 100",
+                                      
+                                      `1000` = "n = 1000",
+                                      `10000` = "n = 10000"))) +
+  labs(
+    title = "Distribution of Simulated Means by Sample Size",
+    x = "Simulated Means",
+    y = "Frequency"
+)
+
+
+```
+
+-   I can use annotations
+
+```{r}
+#| label: dvs-3-2
+# from lab 4 Question 5
+ggplot(lowest_infant_care_2018, aes(x = median_care, y = reorder(region, -median_care))) +
+  geom_col(fill = "steelblue") +
+  geom_text(aes(label = median_care), hjust = -0.2, color = "black", size = 3) +
+  facet_wrap(~study_year) +
+  ggtitle("2018 Infant Care Cost by Region") +
+  ylab("") +
+  xlab("Median Care Cost in 2018 Dollars") +
+  theme_minimal()
+
+```
+
+-   I can be creative...
+
+```{r}
+#| label: dvs-3-3
+# from challenge 7 Question 4
+ggplot(conditioned_fish,
+       aes(x = year, y = condition_index, color = species))+
+  geom_point(alpha = 0.1)+
+  geom_smooth(method = "loess", se = FALSE, aes(color = species))+
+  facet_wrap(~ section)+
+  labs(
+    title = "Condition Index by year, section, and species",
+    x = "Year",
+    y = ""
+  )
 ```
 
 **DVS-4: I can calculate numerical summaries of variables.**
@@ -558,7 +674,7 @@ ggplot(median_prices_regional, aes(x=study_year,y=price_care, color = region))+
 
 ```{r}
 #| label: dvs-4-summarize
-# from lab 4
+# from lab 4 Question 5
 
 lowest_infant_care <- ca_childcare|>
   filter(study_year %in% c(2018,2008))|>
@@ -578,7 +694,7 @@ missing_values <- fish|>
     variables_missing = names(which(colSums(is.na(fish))>0))
   )
   
-# from lab 7 
+# from lab 7 Question 1
 
 ```
 
@@ -593,7 +709,7 @@ missing_values_fish <- fish|>
   map_int(~sum(is.na(.)))|>
   enframe(name = "Variable Name", value = "Number of Missing Values")
 
-# from lab 8
+# from lab 8 Question 4
 
 ```
 
@@ -656,7 +772,7 @@ summary_table <- evals|>
                     male_Junior_prof,
                     female_Junior_prof), na.rm = TRUE)
   )
-# from lab 8 
+# from lab 8 Question 3
 ```
 
 **DVS-6: I can create tables which make my summaries clear to the reader.**
@@ -665,7 +781,7 @@ summary_table <- evals|>
 
 ```{r}
 #| label: dvs-6-1
-# from lab 4
+# from lab 4 Question 5
 
 combined_lowest <-bind_rows(
   lowest_2018,
@@ -708,7 +824,7 @@ pretty_summary_table_gt <- summary_table |>
     table.width = pct(100)  
   )
 
-# from lab 9 
+# from lab 9 GT table
 ```
 
 **DVS-7: I show creativity in my tables.**
@@ -746,7 +862,7 @@ pretty_summary_table_gt <- summary_table |>
     table.width = pct(100)  
   )
 
-# from lab 9 
+# from lab 9 GT Table
 ```
 
 -   Example 2
@@ -759,7 +875,7 @@ pretty_summary_table_kable <- summary_table|>
                  full_width = TRUE, 
                  font_size = 14)
 
-# from lab 9 
+# from lab 9 Kable Table
 ```
 
 ## Program Efficiency
@@ -776,7 +892,7 @@ rescale_column <- function(data_frame, ...) {
     mutate(across(c(...), ~ rescale_01(.)))
 }
 
-# from lab 7
+# from lab 7 Question 8
 ```
 
 -   `across()`
@@ -789,7 +905,7 @@ missing_values <- fish|>
     variables_missing = names(which(colSums(is.na(fish))>0))
   )
 
-# lab 7
+# lab 7 Question 1
 ```
 
 -   `map()` functions
@@ -801,7 +917,7 @@ missing_values_fish <- fish|>
   map_int(~sum(is.na(.)))|>
   enframe(name = "Variable Name", value = "Number of Missing Values")
 
-# from lab 8 
+# from lab 7 Question 1
 ```
 
 **PE-2: I can write functions to reduce repetition in my code.**
@@ -816,7 +932,7 @@ rescale_01 <- function(value){
            (max(value, na.rm = TRUE) - min(value, na.rm = TRUE)))
   }}
 
-# from lab 7 
+# from lab 7 Question 4
 ```
 
 -   Function that operates on data frames
@@ -828,7 +944,7 @@ rescale_column <- function(data_frame, ...) {
     mutate(across(c(...), ~ rescale_01(.)))
 }
 
-# from lab 7 
+# from lab 7 Question 8
 ```
 
 **PE-3:I can use iteration to reduce repetition in my code.**
@@ -843,14 +959,19 @@ rescale_column <- function(data_frame, ...) {
     mutate(across(c(...), ~ rescale_01(.)))
 }
 
-# from lab 7 
+# from lab 7 Question 8 
 ```
 
 -   `map()` function with **one** input (e.g., `map()`, `map_chr()`, `map_dbl()`, etc.)
 
 ```{r}
 #| label: pe-3-map-1
+# from lab 8 Question 1
 
+survey_data_type <- surveys|>
+  map_chr(class)|>
+  enframe(name = "Variable", value = "DataType")|>
+  pivot_wider(names_from = Variable, values_from = DataType)
 ```
 
 -   `map()` function with **more than one** input (e.g., `map_2()` or `pmap()`)
@@ -858,6 +979,13 @@ rescale_column <- function(data_frame, ...) {
 ```{r}
 #| label: pe-3-map-2
 
+# from lab 9 Question 6
+
+all_simulations <- grid |> 
+  mutate(simulated_means = pmap(.l = list(n = n, df = df), 
+                                .f = simulate_means)
+         ) |> 
+  unnest(simulated_means) 
 ```
 
 **PE-4: I can use modern tools when carrying out my analysis.**
@@ -867,12 +995,35 @@ rescale_column <- function(data_frame, ...) {
 ```{r}
 #| label: pe-4-1
 
+# from lab 8 Question 1, pivot_wider supercedes spread(), pipe operator used to avoid intermittent variables.
+
+survey_data_type <- surveys|>
+  map_chr(class)|>
+  enframe(name = "Variable", value = "DataType")|>
+  pivot_wider(names_from = Variable, values_from = DataType)
+
+
 ```
 
 -   I can connect a data wrangling pipeline into a `ggplot()`
 
 ```{r}
 #| label: pe-4-2
+# from lab 7 Question 2
+fish |>
+  filter(is.na(weight)) |>
+  group_by(year, section, trip) |>
+  summarise(missing_count = n(), .groups = "drop")|>
+  ggplot(aes(x = year, y = section, fill = missing_count)) +
+  geom_tile(color = "white") +
+  facet_wrap(~ trip) +
+  scale_fill_gradient(low = "lightblue", high = "darkblue", na.value = "grey90") +
+  labs(
+    title = "Trip",
+    x = "Year",
+    y = "Section",
+    fill = "Missing Count")+
+  theme(plot.title = element_text(hjust = 0.5))
 
 ```
 
@@ -890,20 +1041,26 @@ randomBabies <- function(nBabies = 4){
   step2 <- sum(step1 == 1:nBabies)
   return(step2)
   
-# from lab 9 
+# from lab 9 Question 1
 ```
 
 -   Example 2
 
 ```{r}
 #| label: dsm-1-2
-simulate_means <- function(n, df){
-  map_dbl(.x = 1:n, 
-          .f = ~rchisq(n = 100, df =df) |> mean()
-          )
-}
+simulate_means <- function(n = 100, df = 1) {
+  if (!is.numeric(n) || n <= 0 || n != round(n)) {
+    stop("`n` must be a positive integer.")
+  }
+  if (!is.numeric(df) || df <= 0) {
+    stop("`df` must be a positive number.")
+  }
+  
 
-# from lab 9 
+  map_dbl(.x = seq_len(n), 
+          .f = ~rchisq(n = 100, df = df) |> mean())
+}
+# from lab 9 Question 4
 ```
 
 **DSSM-2: I can conduct common statistical analyses in R.**
@@ -912,9 +1069,9 @@ simulate_means <- function(n, df){
 
 ```{r}
 #| label: dsm-2-1
-# 
-species_mod <- aov()
+# from lab 2 Question 17
 
+species_mod <- aov()
 summary(species_mod)
 ```
 
@@ -923,6 +1080,8 @@ summary(species_mod)
 ```{r}
 #| label: dsm-2-2
 
+# from challenge 3 Question 3
+chisq.test(teacher_evals_compare$SET_level, teacher_evals_compare$sen_level)
 ```
 
 ## Revising My Thinking
